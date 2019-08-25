@@ -1,0 +1,39 @@
+{
+  "name": "ncrypt-js",
+  "version": "1.0.0",
+  "description": "a light weight javascript data encryption and decryption library",
+  "main": "index.ts",
+  "scripts": {
+    "start": "tsc --outDir dist && node dist/index",
+    "start:dev": "tsc -w index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajimae/ncrypt-js.git"
+  },
+  "keywords": [
+    "ncrypt-js",
+    "crypto",
+    "cipher",
+    "decrypt",
+    "encrypt",
+    "typescript",
+    "ecmascript5",
+    "encryption",
+    "cryptojs",
+    "cryptography",
+    "decryption",
+    "javascript-library"
+  ],
+  "author": "meeky",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ajimae/node-encode/issues"
+  },
+  "homepage": "https://github.com/ajimae/node-encode#readme",
+  "devDependencies": {
+    "@types/node": "^12.7.2",
+    "crypto": "^1.0.1"
+  }
+}
