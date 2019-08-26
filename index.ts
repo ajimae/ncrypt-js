@@ -1,4 +1,7 @@
-import { encrypt, decrypt } from './src/utils';
+import {
+  encrypt,
+  decrypt
+} from './src/utils';
 
 export {
   encrypt,
