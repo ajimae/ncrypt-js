@@ -4,3 +4,8 @@ export {
   encrypt,
   decrypt,
 }
+
+export default {
+  encrypt,
+  decrypt,
+}

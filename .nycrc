@@ -4,6 +4,9 @@
   "extension": [
     ".ts"
   ],
+  "require": [
+    "ts-node/register"
+  ],
   "include": [
     "**/*js",
     "**/*ts"

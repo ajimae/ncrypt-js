@@ -6,6 +6,7 @@
   "scripts": {
     "start": "tsc --outDir dist && node dist/index",
     "start:dev": "tsc -w index.ts",
+    "clean": "rm -rf dist",
     "test": "cross-env TS_NODE_FILES=true nyc mocha --exit --require ts-node/register --colors test/**/*.ts",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
