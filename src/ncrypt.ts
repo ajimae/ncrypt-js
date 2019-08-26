@@ -6,7 +6,7 @@ export default class Ncrypt implements INcrypt {
    * ncrypt namespace.
    * @type {string.<*>}
    */
-  private salt: string;
+  private secret: string;
 
   /**
    * ncrypt namespace.
@@ -14,8 +14,8 @@ export default class Ncrypt implements INcrypt {
    */
   private text: string;
 
-  constructor(text: string, salt: string) {
-    this.salt = salt;
+  constructor(text: string, secret: string) {
+    this.secret = secret;
     this.text = text;
   }
 
@@ -27,10 +27,10 @@ export default class Ncrypt implements INcrypt {
   convertTextToDecimal = (data: string) => data.split('').map((value) => value.charCodeAt(0));
 
   /**
-   * encode provided salt on decimal character codes
+   * encode provided secret on decimal character codes
    * @param {charCode<number[], *>} character codes
    */
-  applySaltToCharacters = (charCodes: number[] | number | string) => this.convertTextToDecimal(this.salt)
+  applySecretToCharacters = (charCodes: number[] | number | string) => this.convertTextToDecimal(this.secret)
     .reduce((firstValue: any, secondValue: any) => (firstValue ^ secondValue), charCodes)
 
   /**
@@ -58,7 +58,7 @@ export default class Ncrypt implements INcrypt {
      */
     return data.split('')
       .map(this.convertTextToDecimal)
-      .map(this.applySaltToCharacters)
+      .map(this.applySecretToCharacters)
       .map(this.convertByteToHexadecimal)
       .join('');
   }
@@ -71,7 +71,7 @@ export default class Ncrypt implements INcrypt {
   decodeData(encodeData: string) {
     return encodeData.match(/.{1,2}/g)
       .map((hex: any) => parseInt(hex, 16))
-      .map(this.applySaltToCharacters)
+      .map(this.applySecretToCharacters)
       .map((charCode: any) => String.fromCharCode(charCode))
       .join('')
   }

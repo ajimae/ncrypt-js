@@ -12,13 +12,13 @@ const key: Buffer = crypto.randomBytes(32);
 const initialVector: Buffer = crypto.randomBytes(16);
 
 /**
- * secret key {salt}
+ * secret key {secret}
  */
 let _secret: string;
 
 
 /**
- * sets the value of the salt to secret
+ * sets the value of the secret
  * @param {secret.<string>} secret
  */
 const setSecret = (secret: string) => {
@@ -28,19 +28,19 @@ const setSecret = (secret: string) => {
 /**
  * 
  * @param {text.<object, string, *>} text
- * @param {salt.<string>} salt
+ * @param {secret.<string>} secret
  * @returns {data.<string>} crypto-cipher encrypted data and concatenated initial vector string
  */
-const encrypt = function (text: object | string | number | boolean, salt: string) {
+const encrypt = function (text: object | string | number | boolean, secret: string) {
   if (text === null) throw new Error('no data was entered, enter data of type object, number, string or boolean to be encrypted.');
-  setSecret(salt);
+  setSecret(secret);
   const data: string = JSON.stringify(text);
-  if (typeof salt !== 'string') throw new Error('must be initialized with a secret key of type string');
+  if (typeof secret !== 'string') throw new Error('must be initialized with a secret key of type string');
   
   /**
-   * ncrypt constructor with initial data and secret {salt}
+   * ncrypt constructor with initial data and secret {secret}
    */
-  const encryptObject: Ncrypt = new Ncrypt(data, salt);
+  const encryptObject: Ncrypt = new Ncrypt(data, secret);
   const encoded: string = encryptObject.encodeData();
   const cipher: crypto.Cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), initialVector);
   let encrypted: Buffer = cipher.update(encoded);
