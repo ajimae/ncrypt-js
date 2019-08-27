@@ -6,10 +6,10 @@ const expect = chai.expect;
 const { encrypt, decrypt } = ncrypt;
 
 const object = {
-  SimpleCrypto: "is great.",
+  NcryptJs: "is great.",
   You: "should try it!"
 };
-const string = "SimpleCrypto is great.";
+const string = "ncrypt-js is great.";
 const number = 19960404;
 const boolean = false;
 
@@ -76,6 +76,24 @@ describe('Error handling and validations', () => {
       encrypt('nullSecret', _nullSecret);
     } catch (error) {
       expect(error.message).equal('must be initialized with a secret key of type string');
+    }
+  });
+
+  it('should error when non-string data is passed as decryption string', () => {
+    try {
+      const nonStringData = '["string"]';
+      decrypt(nonStringData);
+    } catch (error) {
+      expect(error.message).equal('argument must be a string, or a string-like object');
+    }
+  });
+
+  it('should error when a non string data type is to be decrypted', () => {
+    try {
+      const nonStringData: any = void(0);
+      decrypt(nonStringData);
+    } catch (error) {
+      expect(error.message).equal('argument must be a string, or a string-like object');
     }
   });
 
