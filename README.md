@@ -1,6 +1,8 @@
 # NcryptJs
 
-[![Build Status](https://travis-ci.com/ajimae/ncrypt-js.svg?branch=master)](https://travis-ci.com/ajimae/ncrypt-js) [![Coverage Status](https://coveralls.io/repos/github/ajimae/ncrypt-js/badge.svg)](https://coveralls.io/github/ajimae/ncrypt-js)
+[![Build Status](https://travis-ci.com/ajimae/ncrypt-js.svg?branch=master)](https://travis-ci.com/ajimae/ncrypt-js) [![Coverage Status](https://coveralls.io/repos/github/ajimae/ncrypt-js/badge.svg)](https://coveralls.io/github/ajimae/ncrypt-js) ![NPM](https://img.shields.io/npm/l/ncrypt-js)
+
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/ajimae/ncrypt-js) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/ajimae/ncrypt-js) ![GitHub issues](https://img.shields.io/github/issues/ajimae/ncrypt-js)
 
 **_NcryptJs_** is a light weight javascript data encryption and decryption library. This library implements the nodejs default crypto functionality as a mid-channel cipher in addition to a simple and elegant custom data encoding and encryption algorithm.
 
