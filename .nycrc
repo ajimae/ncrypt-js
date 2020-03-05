@@ -12,6 +12,7 @@
     "**/*ts"
   ],
   "exclude": [
+    "dist/**",
     "coverage/**",
     "node_modules/**",
     "**/*.d.ts",
