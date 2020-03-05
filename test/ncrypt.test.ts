@@ -1,30 +1,33 @@
 import * as chai from "chai";
 
-import * as ncrypt from '../index';
+import ncrypt from '../index';
 
 const expect = chai.expect;
-const { encrypt, decrypt } = ncrypt;
 
 const object = {
   NcryptJs: "is great.",
   You: "should try it!"
 };
-const string = "ncrypt-js is great.";
-const number = 19960404;
-const boolean = false;
+const string: string = "ncrypt-js is great.";
+const number: number = 19960404;
+const boolean: boolean = false;
+const _nullData: any = null;
 
 const _secret = 'shhh its a secret';
-const _nullSecret: any = null;
 
-const encryptString = encrypt(string, _secret);
-const encryptNumber = encrypt(number, _secret);
-const encryptObject = encrypt(object, _secret);
-const encryptBoolean = encrypt(boolean, _secret);
+const { encrypt, decrypt } = new ncrypt(_secret);
+
+const encryptString = encrypt(string);
+const encryptNumber = encrypt(number);
+const encryptObject = encrypt(object);
+const encryptBoolean = encrypt(boolean);
+const encryptNullData = encrypt(_nullData);
 
 const decryptString = decrypt(encryptString);
 const decryptNumber = decrypt(encryptNumber);
 const decryptObject = decrypt(encryptObject);
 const decryptBoolean = decrypt(encryptBoolean);
+const decryptNullData = encrypt(_nullData);
 
 describe('Encrytion', () => {
   it('should be able to encrypt a string', () => {
@@ -73,7 +76,7 @@ describe('Decrytion', () => {
 describe('Error handling and validations', () => {
   it('should error when secret is not provided', () => {
     try {
-      encrypt('nullSecret', _nullSecret);
+      encrypt('nullSecret');
     } catch (error) {
       expect(error.message).equal('must be initialized with a secret key of type string');
     }
@@ -81,7 +84,8 @@ describe('Error handling and validations', () => {
 
   it('should error when non-string data is passed as decryption string', () => {
     try {
-      const nonStringData = '["string"]';
+      const nonStringData = 12345;
+      //@ts-ignore
       decrypt(nonStringData);
     } catch (error) {
       expect(error.message).equal('argument must be a string, or a string-like object');
@@ -96,20 +100,36 @@ describe('Error handling and validations', () => {
       expect(error.message).equal('argument must be a string, or a string-like object');
     }
   });
-
-  it('should throw an error when an undefined data is to be encrypted', () => {
+  
+  it('should error when a non string data type is to be decrypted', () => {
     try {
-      encrypt(undefined, _secret);
+      decrypt(decryptNullData);
     } catch (error) {
-      expect(error.message).equal('no data was entered, enter data of type object, number, string or boolean to be encrypted.');
+      expect(error.message).equal('argument must be a string, or a string-like object');
     }
   });
 
   it('should throw an error when an undefined data is to be encrypted', () => {
     try {
-      encrypt(null, _secret);
+      encrypt(undefined);
+    } catch (error) {
+      expect(error.message).equal('invalid data was entered, enter data of type object, number, string or boolean to be encrypted.');
+    }
+  });
+
+  it('should throw an error when an undefined data is to be encrypted', () => {
+    try {
+      encrypt(null);
     } catch (error) {
       expect(error.message).equal('no data was entered, enter data of type object, number, string or boolean to be encrypted.');
+    }
+  });
+  
+  it('should throw an error when an null data is to be encrypted', () => {
+    try {
+      encrypt(encryptNullData);
+    } catch (error) {
+      expect(error.message).equal('invalid data was entered, enter data of type object, number, string or boolean to be encrypted.');
     }
   });
 });

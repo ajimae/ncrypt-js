@@ -1,14 +1,7 @@
-import {
-  encrypt,
-  decrypt
-} from './src/utils';
+import ncrypt from './src/ncrypt';
 
+module.exports = ncrypt;
+export default ncrypt;
 export {
-  encrypt,
-  decrypt,
-}
-
-export default {
-  encrypt,
-  decrypt,
+  ncrypt
 }
