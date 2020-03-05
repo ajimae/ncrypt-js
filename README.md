@@ -1,11 +1,13 @@
 # NcryptJs
 
-[![Build Status](https://travis-ci.com/ajimae/ncrypt-js.svg?branch=master)](https://travis-ci.com/ajimae/ncrypt-js) [![Coverage Status](https://coveralls.io/repos/github/ajimae/ncrypt-js/badge.svg)](https://coveralls.io/github/ajimae/ncrypt-js) [![License](https://img.shields.io/github/license/ajimae/ncrypt-js)](#license)
-
-[![Release](https://img.shields.io/github/v/release/ajimae/ncrypt-js)](https://github.com/ajimae/ncrypt-js/releases) [![size](https://img.shields.io/github/languages/code-size/ajimae/ncrypt-js)](https://img.shields.io/github/languages/code-size/ajimae/ncrypt-js) [![issues](https://img.shields.io/github/issues/ajimae/ncrypt-js)](https://img.shields.io/github/issues/ajimae/ncrypt-js)
+[![Build Status](https://travis-ci.com/ajimae/ncrypt-js.svg?branch=master)](https://travis-ci.com/ajimae/ncrypt-js) [![Coverage Status](https://coveralls.io/repos/github/ajimae/ncrypt-js/badge.svg)](https://coveralls.io/github/ajimae/ncrypt-js)
 
 **_NcryptJs_** is a light weight javascript data encryption and decryption library. This library implements the nodejs default crypto functionality as a mid-channel cipher in addition to a simple and elegant custom data encoding and encryption algorithm.
 
+<!-- ```diff
+- const ReduxThunk = require('redux-thunk')
++ const ReduxThunk = require('redux-thunk').default
+``` -->
 
 ## Contents
 
@@ -55,23 +57,23 @@ yarn add ncrypt-js
 
 To include **_ncrypt-js_** in your project. use one of these:
 
-```javascript
+```diff
 // ES6 and later
-import ncrypt from "ncrypt-js";
-import * as ncrypt from "ncrypt-js";
++ import ncrypt from "ncrypt-js";
+- import * as ncrypt from "ncrypt-js";
 
 // or
-import { encrypt, decrypt } from "ncrypt-js";
+- import { encrypt, decrypt } from "ncrypt-js";
 ```
 
 However, if you are using ECMAScript 5 and older, use the require statement:
 
-```javascript
+```diff
 // ES5 and older
-var ncrypt = require("ncrypt-js");
++ var ncrypt = require("ncrypt-js");
 
 // or
-var { encrypt, decrypt } = require("ncrypt-js");
+- var { encrypt, decrypt } = require("ncrypt-js");
 ```
 
 ## Documentation
@@ -87,23 +89,29 @@ var { encrypt, decrypt } = require("ncrypt-js");
 
 | Functions                                                                                              | Description                                                                                            | Parameters                                                                                             | Return                                                                                                 |
 | -------------------------------------------------------------                                          | --------------------------------------------------------------------------------------                 | -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                             | ----------------------------------------------------------------------------------------------------------------                                                                                                |
-| **encrypt()**                                                                                          | Encrypts data.                                                                                     |**data**: _object/string/number/boolean_ - The data to be encrypted. <br/> **secret**: _string_  - The secret (key or password) that will be used as the salt for the encryption process.                  |**ciphered**: _string_ - encrypted data.                                                                    |
+| **encrypt()**                                                                                          | Encrypts data.                                                                                     |**data**: _object/string/number/boolean_ - The data to be encrypted. <br/>|**ciphered**: _string_ - encrypted data.                                                                    |
 | **decrypt()**                                                                                          | Decrypts the encrypted or ciphered data                                                                 | **encodedData**: string - The encrypted data: _string_ to be decrypted.                        | **data**: _string/object/number/boolean_ - The decrypted or original data (it might be string or object, depends on the initial input data type).
 
 
 
-### Using `encrypt()` and `decrypt()` functons
+### Using `encrypt()` and `decrypt()` functons - As of version 1.1.0 this is deprecated, an object must be created first.
 
 To encrypt and decrypt data, simply use `encrypt()` and `decrypt()` functions respectively. This will use `AES-256-CBC` encryption algorithm as the mid-channel cipher.
 
-```javascript
-var { encrypt, decrypt } = require("ncrypt-js");
+```diff
+- var { encrypt, decrypt } = require("ncrypt-js");
++ var ncrypt = require("ncrypt-js");
+
 
 var data = "Hello World!";
 var _secretKey = "some-super-secret-key";
 
++ var { encodeData, decodeData } = new ncrypt(_secretKey);
+
 // encrypting super sensitive data here
-var encryptedData = encrypt(data, _secretKey);
+- var encryptedData = encrypt(data, _secretKey);
++ var encryptedData = encrypt(data);
+
 console.log("Encryption process...");
 console.log("Plain Text    : " + data);
 console.log("Cipher Text   : " + encryptedData);
@@ -112,7 +120,7 @@ console.log("Cipher Text   : " + encryptedData);
 var decryptedData = decrypt(encryptedData);
 console.log("... and then decryption...");
 console.log("Decipher Text : " + decryptedData);
-console.log("... done.");
+console.log("...done.");
 ```
 
 ### Using default imports
@@ -123,17 +131,19 @@ var ncrypt = require("ncrypt-js");
 var data = "Hello World!";
 var _secretKey = "some-super-secret-key";
 
+var ncryptObject = new ncrypt(_secretKey);
+
 // encrypting super sensitive data here
-var encryptedData = ncrypt.encrypt(data, _secretKey);
+var encryptedData = ncryptObject.encrypt(data);
 console.log("Encryption process...");
 console.log("Plain Text    : " + data);
 console.log("Cipher Text   : " + encryptedData);
 
 // decrypted super encrypted string here
-var decryptedData = ncrypt.decrypt(encryptedData);
+var decryptedData = ncryptObject.decrypt(encryptedData);
 console.log("... and then decryption...");
 console.log("Decipher Text : " + decryptedData);
-console.log("... done.");
+console.log("...done.");
 ```
 
 ### Object Encryption
@@ -152,17 +162,19 @@ var object = {
   You: "should try it!"
 }
 
+var ncryptObject = new ncrypt('ncrypt-js');
+
 // encrypting super sensitive data here
-var encryptedObject = ncrypt.encrypt(object, _secretKey);
+var encryptedObject = ncryptObject.encrypt(object);
 console.log("Encryption process...");
 console.log("Plain Object     : " + object);
 console.log("Encrypted Object : " + encryptedObject);
 
 // decrypted super encrypted string here
-var decryptedObject = ncrypt.decrypt(encryptedObject);
+var decryptedObject = ncryptObject.decrypt(encryptedObject);
 console.log("... and then decryption...");
 console.log("Decipher Text : " + decryptedObject);
-console.log("... done.");
+console.log("...done.");
 ```
 
 ## Built With 

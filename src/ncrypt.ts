@@ -1,4 +1,5 @@
 import { INcrypt } from './ncrypt.d';
+import { encode, decode } from './utils';
 
 export default class Ncrypt implements INcrypt {
 
@@ -13,10 +14,13 @@ export default class Ncrypt implements INcrypt {
    * @type {string.<*>}
    */
   private text: string;
-
-  constructor(text: string, secret: string) {
+  /**
+   * object constructor
+   * @param text 
+   * @param secret 
+   */
+  constructor(secret: string) {
     this.secret = secret;
-    this.text = text;
   }
 
   /**
@@ -47,20 +51,25 @@ export default class Ncrypt implements INcrypt {
    * @param {}
    * @returns {string.<string>} encoded string data
    */
-  encodeData() {
-    const data: string = this.text;
-    if (data == void 0) throw new Error('no data was entered, enter data of type object, number, string or boolean to be encrypted.');
-
+  encrypt = (data: object | string | number | boolean) => {
     /**
      * this does the actual processing return a string
      * resulting from charCode conversion, salting and 
      * hexadecimal mapping
+     * 
      */
-    return data.split('')
-      .map(this.convertTextToDecimal)
-      .map(this.applySecretToCharacters)
-      .map(this.convertByteToHexadecimal)
-      .join('');
+    // if (data == void 0) throw new Error('invalid data was entered, enter data of type object, number, string or boolean to be encrypted.');
+    try {
+      const encodedMessage = JSON.stringify(data).split('')
+        .map(this.convertTextToDecimal)
+        .map(this.applySecretToCharacters)
+        .map(this.convertByteToHexadecimal)
+        .join('');
+
+      return encode(encodedMessage);
+    } catch (error) {
+      throw new Error('invalid data was entered, enter data of type object, number, string or boolean to be encrypted.');
+    }
   }
 
   /**
@@ -68,11 +77,18 @@ export default class Ncrypt implements INcrypt {
    * @param {string.<stirng>} encodeData 
    * @returns {decodedData.<string>} decoded data
    */
-  decodeData(encodeData: string) {
-    return encodeData.match(/.{1,2}/g)
-      .map((hex: any) => parseInt(hex, 16))
-      .map(this.applySecretToCharacters)
-      .map((charCode: any) => String.fromCharCode(charCode))
-      .join('')
+  decrypt = (text: string) => {
+    const encodeData = decode(text);
+
+      const data = encodeData.match(/.{1,2}/g)
+        .map((hex: any) => parseInt(hex, 16))
+        .map(this.applySecretToCharacters)
+        .map((charCode: any) => String.fromCharCode(charCode))
+        .join('');
+
+        const arr = [];
+        arr.push(data);
+
+      return JSON.parse(data);
   }
 }

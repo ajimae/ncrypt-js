@@ -3,6 +3,6 @@ export interface INcrypt {
   convertTextToDecimal(text: string): number[];
   applySecretToCharacters(charCodes: number[] | number): number;
   convertByteToHexadecimal(number: number): string;
-  encodeData(): string;
-  decodeData(data: string): string;
+  encrypt(text: object | string | number | boolean): string;
+  decrypt(data: string): string;
 }
