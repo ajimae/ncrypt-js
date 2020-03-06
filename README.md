@@ -1,8 +1,8 @@
 # NcryptJs
 
-[![Build Status](https://travis-ci.com/ajimae/ncrypt-js.svg?branch=master)](https://travis-ci.com/ajimae/ncrypt-js) [![Coverage Status](https://coveralls.io/repos/github/ajimae/ncrypt-js/badge.svg)](https://coveralls.io/github/ajimae/ncrypt-js) [![NPM](https://img.shields.io/npm/l/ncrypt-js)](https://img.shields.io/npm/l/ncrypt-js)
+[![Build Status](https://travis-ci.com/ajimae/ncrypt-js.svg?branch=master)](https://travis-ci.com/ajimae/ncrypt-js) [![Coverage Status](https://coveralls.io/repos/github/ajimae/ncrypt-js/badge.svg)](https://coveralls.io/github/ajimae/ncrypt-js) [![NPM](https://img.shields.io/npm/l/ncrypt-js)](https://www.npmjs.com/package/ncrypt-js/v/2.0.0#license)
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/ajimae/ncrypt-js) [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/ajimae/ncrypt-js)](https://img.shields.io/github/languages/code-size/ajimae/ncrypt-js) [![GitHub issues](https://img.shields.io/github/issues/ajimae/ncrypt-js)](https://img.shields.io/github/issues/ajimae/ncrypt-js)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/ajimae/ncrypt-js)](https://github.com/ajimae/ncrypt-js/releases) [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/ajimae/ncrypt-js)](https://github/languages/code-size/ajimae/ncrypt-js) [![GitHub issues](https://img.shields.io/github/issues/ajimae/ncrypt-js)](https://github.com/ajimae/ncrypt-js/issues)
 
 **_NcryptJs_** is a light weight javascript data encryption and decryption library. This library implements the nodejs default crypto functionality as a mid-channel cipher in addition to a simple and elegant custom data encoding and encryption algorithm.
 
@@ -96,7 +96,7 @@ However, if you are using ECMAScript 5 and older, use the require statement:
 
 
 
-### Using `encrypt()` and `decrypt()` functons - As of version 1.1.0 this is deprecated, an object must be created first.
+#### Using `encrypt()` and `decrypt()` functons - As of version 2.0.0 directly importing or invoking these functions is deprecated, an object must be created with a secret first, before the methods can now be invoked on the created object.
 
 To encrypt and decrypt data, simply use `encrypt()` and `decrypt()` functions respectively. This will use `AES-256-CBC` encryption algorithm as the mid-channel cipher.
 
@@ -177,6 +177,21 @@ var decryptedObject = ncryptObject.decrypt(encryptedObject);
 console.log("... and then decryption...");
 console.log("Decipher Text : " + decryptedObject);
 console.log("...done.");
+````
+If you are using any sort of environmental key-value store, e.g `.env` and for additional security, you can add the following to your environment.
+
+```diff
+// .env
+
+KEY=sshhhh this is a super secret key
+SECRET=this is our hashing secret
+```
+Then when creating your object, you can use the SECRET from your environment e.g:
+```
+...
+var ncrypt = require('ncrypt-js');
+var { encrypt, decrypt } = new ncrypt(process.env.SECRET);
+...
 ```
 
 ## Built With 
