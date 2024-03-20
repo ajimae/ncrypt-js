@@ -29,7 +29,7 @@ const decryptObject = decrypt(encryptObject);
 const decryptBoolean = decrypt(encryptBoolean);
 const decryptNullData = encrypt(_nullData);
 
-describe('Encrytion', () => {
+describe('Encryption', () => {
   it('should be able to encrypt a string', () => {
     expect(string).to.be.a('string');
     expect(typeof encryptString).to.eql('string');
@@ -51,7 +51,7 @@ describe('Encrytion', () => {
   });
 });
 
-describe('Decrytion', () => {
+describe('Decryption', () => {
   it('should be able to decrypt original string', () => {
     expect(decryptString).to.be.eql(string);
     expect(typeof decryptString).to.eql('string');
@@ -100,7 +100,7 @@ describe('Error handling and validations', () => {
       expect(error.message).equal('argument must be a string, or a string-like object');
     }
   });
-  
+
   it('should error when a non string data type is to be decrypted', () => {
     try {
       decrypt(decryptNullData);
@@ -124,7 +124,7 @@ describe('Error handling and validations', () => {
       expect(error.message).equal('no data was entered, enter data of type object, number, string or boolean to be encrypted.');
     }
   });
-  
+
   it('should throw an error when an null data is to be encrypted', () => {
     try {
       encrypt(encryptNullData);

@@ -54,6 +54,6 @@
     "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
     "handlebars": "^4.7.3",
-    "simple-crypto-js": "^2.2.0"
+    "simple-crypto-js": "^3.0.1"
   }
 }
