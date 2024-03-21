@@ -1,14 +1,12 @@
 {
   "name": "ncrypt-js",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "a light weight javascript data encryption and decryption library",
   "main": "dist/index.js",
   "scripts": {
-    "start": "npm run build && node dist/index",
-    "start:dev": "ts-node index.ts",
     "clean": "rm -rf dist",
-    "prepare": "npm run build",
-    "build": "tsc --outDir dist",
+    "prepare": "yarn build",
+    "build": "yarn clean;tsc --outDir dist",
     "test": "cross-env TS_NODE_FILES=true nyc mocha --exit --require ts-node/register --colors test/**/*.ts",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
@@ -50,9 +48,14 @@
     "ts-node": "^8.6.2",
     "typescript": "^3.8.3"
   },
+  "files": [
+    "dist",
+    "package.json",
+    "LICENSE",
+    "tsconfig.json"
+  ],
   "dependencies": {
     "crypto": "^1.0.1",
-    "dotenv": "^16.4.5",
-    "handlebars": "^4.7.8"
+    "dotenv": "^16.4.5"
   }
 }

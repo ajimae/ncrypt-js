@@ -1,0 +1,46 @@
+name: publish
+on:
+  release:
+    types: [published]
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout and setup
+        uses: actions/checkout@v4
+
+      - name: node setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 12.22.2
+          cache: 'yarn'
+
+      - name: install dependencies
+        run: yarn install --frozen-lockfile
+      - name: run test suites
+        run: yarn test
+
+  publish:
+    name: publish
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: node setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 12.22.2
+          registry-url: https://registry.npmjs.org
+          cache: 'yarn'
+
+      - name: install dependencies
+        run: yarn install --frozen-lockfile
+      - name: build source
+        run: yarn build
+      - name: publish
+        run: yarn publish --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
