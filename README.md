@@ -6,25 +6,17 @@
 
 **_NcryptJs_** is a light weight javascript data encryption and decryption library. This library implements the nodejs default crypto functionality as a mid-channel cipher in addition to a simple and elegant custom data encoding and encryption algorithm.
 
-<!-- ```diff
-- const ReduxThunk = require('redux-thunk')
-+ const ReduxThunk = require('redux-thunk').default
-``` -->
-
 ## Contents
 
 * [NcryptJs](#NcryptJs)
   * [Contents](#contents)
-  <!-- * [Changes Log (What's New)](#changes-log-whats-new) -->
   * [Getting Started](#getting-started)
     * [Installation](#installation)
   * [Documentation](#documentation)
-    * [NcryptJs Functions](#ncryptjs-functions)
-    * [Using `encrypt()` and `decrypt()`](#using-encrypt-and-decrypt)
-    * [Using default imports](#Using-default-imports)
-    <!-- * [Change the Secret Key](#change-the-secret-key)
-    * [Object Encryption](#object-encryption)
-    * [Random Key Generator](#random-key-generator) -->
+    * [NcryptJs Methods](#ncryptjs-methods)
+    * [Using the `randomString()` methods](#using-randomstring-method)
+    * [Using `encrypt()` and `decrypt()` methods](#using-encrypt-and-decrypt-methods)
+    * [Using default imports](#using-default-imports)
   * [Built With](#built-with)
   * [Contribution](#contribution)
   * [Version Management](#version-management)
@@ -82,23 +74,38 @@ However, if you are using ECMAScript 5 and older, use the require statement:
 
 **_NcryptJs_** is a simple library with only two two exposed functions. This is all intentional mainly to keep everything simple. This is a complete documentation of the library and how to use it in your project. All examples work on both ECMAScript 6 (and later) and ECMAScript 5 (and older).
 
-### NcryptJs Functions
+### NcryptJs Methods
 
 
-### List of **_NcryptJs_** functions.
+### List of **_NcryptJs_** Methods.
 
 
 
-| Functions                                                                                              | Description                                                                                            | Parameters                                                                                             | Return                                                                                                 |
+| Methods                                                                                              | Description                                                                                            | Parameters                                                                                             | Return                                                                                                 |
 | -------------------------------------------------------------                                          | --------------------------------------------------------------------------------------                 | -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                             | ----------------------------------------------------------------------------------------------------------------                                                                                                |
+| [_static_] **randomString()**                                                                                          | Random String.                                                                                     |**size**: _number_ - An optional size of the generated `randomBytes`. <br/>**enc:** _base64/hex_ - Encoding used for encoding the `randomBytes` defaults to _`base64`_ |**encoded**: _string_ - encoded string.                                                                    |
 | **encrypt()**                                                                                          | Encrypts data.                                                                                     |**data**: _object/string/number/boolean_ - The data to be encrypted. <br/>|**ciphered**: _string_ - encrypted data.                                                                    |
 | **decrypt()**                                                                                          | Decrypts the encrypted or ciphered data                                                                 | **encodedData**: string - The encrypted data: _string_ to be decrypted.                        | **data**: _string/object/number/boolean_ - The decrypted or original data (it might be string or object, depends on the initial input data type).
 
 
+### Using randomString method
 
-#### Using `encrypt()` and `decrypt()` functons - As of version 2.0.0 directly importing or invoking these functions is deprecated, an object must be created with a secret first, before the methods can now be invoked on the created object.
+The `randomString()` static method can generate [random bytes](https://nodejs.org/api/crypto.html#cryptorandombytessize-callback) encoded into a `hexadecimal` or `base64` strings. This string can be useful in a variety of use cases e.g to generate database ids, to generate a unique string for a list, a unique serial strings etc.
 
-To encrypt and decrypt data, simply use `encrypt()` and `decrypt()` functions respectively. This will use `AES-256-CBC` encryption algorithm as the mid-channel cipher.
+```ts
+var ncrypt = require('ncrypt-js');
+
+var randomStr = ncrypt.randomString(8, 'base64');
+console.log(randomStr) // t78WcmYAFOY=
+
+// signature
+ncrypt.randomString(size?: number, enc?: 'base64' | 'hex');
+```
+
+### Using encrypt() and decrypt() methods
+The `encrypt()` and `decrypt()` methods as of version 2.0.0 directly importing or invoking these methods is deprecated, an object must be created with a secret first, before the methods can now be invoked on the created object.
+
+To `encrypt` and `decrypt` data, simply use `encrypt()` and `decrypt()` methods respectively. This will use `AES-256-CBC` encryption algorithm as the mid-channel cipher.
 
 ```diff
 - var { encrypt, decrypt } = require("ncrypt-js");
@@ -108,7 +115,7 @@ To encrypt and decrypt data, simply use `encrypt()` and `decrypt()` functions re
 var data = "Hello World!";
 var _secretKey = "some-super-secret-key";
 
-+ var { encodeData, decodeData } = new ncrypt(_secretKey);
++ var { encrypt, decrypt } = new ncrypt(_secretKey);
 
 // encrypting super sensitive data here
 - var encryptedData = encrypt(data, _secretKey);
@@ -180,11 +187,16 @@ console.log("...done.");
 ````
 If you are using any sort of environmental key-value store, e.g `.env` and for additional security, you can add the following to your environment.
 
-```diff
-// .env
+```bash
+# .env
 
-KEY=sshhhh this is a super secret key
-SECRET=this is our hashing secret
+# used internally to set the `key`
+KEY='sshhhh this is a super secret key'
+
+# used internally to set the `encoding` - ['base64' | 'binary' | 'hex' | 'ucs-2' | 'ucs2' | 'utf16le']
+NCRPT_ENC='hex'
+
+SECRET='this is our hashing secret'
 ```
 Then when creating your object, you can use the SECRET from your environment e.g:
 ```
