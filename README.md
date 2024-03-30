@@ -16,7 +16,8 @@
     * [NcryptJs Methods](#ncryptjs-methods)
     * [Using the `randomString()` methods](#using-randomstring-method)
     * [Using `encrypt()` and `decrypt()` methods](#using-encrypt-and-decrypt-methods)
-    * [Using default imports](#using-default-imports)
+    * [Stirng Encryption](#string-encryption)
+    * [Object Encryption](#object-encryption)
   * [Built With](#built-with)
   * [Contribution](#contribution)
   * [Version Management](#version-management)
@@ -51,23 +52,17 @@ yarn add ncrypt-js
 
 To include **_ncrypt-js_** in your project. use one of these:
 
-```diff
+```js
 // ES6 and later
-+ import ncrypt from "ncrypt-js";
-- import * as ncrypt from "ncrypt-js";
-
-// or
-- import { encrypt, decrypt } from "ncrypt-js";
+import ncrypt from "ncrypt-js";
+// or import { ncrypt } from "ncrypt-js"
 ```
 
 However, if you are using ECMAScript 5 and older, use the require statement:
 
-```diff
+```js
 // ES5 and older
-+ var ncrypt = require("ncrypt-js");
-
-// or
-- var { encrypt, decrypt } = require("ncrypt-js");
+var { ncrypt } = require("ncrypt-js");
 ```
 
 ## Documentation
@@ -93,7 +88,7 @@ However, if you are using ECMAScript 5 and older, use the require statement:
 The `randomString()` static method can generate [random bytes](https://nodejs.org/api/crypto.html#cryptorandombytessize-callback) encoded into a `hexadecimal` or `base64` strings. This string can be useful in a variety of use cases e.g to generate database ids, to generate a unique string for a list, a unique serial strings etc.
 
 ```ts
-var ncrypt = require('ncrypt-js');
+var { ncrypt } = require('ncrypt-js'); // or import ncrypt from 'ncrypt-js'
 
 var randomStr = ncrypt.randomString(8, 'base64');
 console.log(randomStr) // t78WcmYAFOY=
@@ -103,13 +98,13 @@ ncrypt.randomString(size?: number, enc?: 'base64' | 'hex');
 ```
 
 ### Using encrypt() and decrypt() methods
-The `encrypt()` and `decrypt()` methods as of version 2.0.0 directly importing or invoking these methods is deprecated, an object must be created with a secret first, before the methods can now be invoked on the created object.
+The `encrypt()` and `decrypt()` methods as of version 2.0.0 directly importing or invoking these methods is `deprecated`, an object must first be created with a secret, before the methods can then be invoked on the created object.
 
 To `encrypt` and `decrypt` data, simply use `encrypt()` and `decrypt()` methods respectively. This will use `AES-256-CBC` encryption algorithm as the mid-channel cipher.
 
 ```diff
 - var { encrypt, decrypt } = require("ncrypt-js");
-+ var ncrypt = require("ncrypt-js");
++ var { ncrypt } = require("ncrypt-js");
 
 
 var data = "Hello World!";
@@ -132,10 +127,10 @@ console.log("Decipher Text : " + decryptedData);
 console.log("...done.");
 ```
 
-### Using default imports
+### String Encryption
 
 ```javascript
-var ncrypt = require("ncrypt-js");
+var { ncrypt } = require("ncrypt-js");
 
 var data = "Hello World!";
 var _secretKey = "some-super-secret-key";
@@ -148,7 +143,7 @@ console.log("Encryption process...");
 console.log("Plain Text    : " + data);
 console.log("Cipher Text   : " + encryptedData);
 
-// decrypted super encrypted string here
+// decrypted super encrypted data here
 var decryptedData = ncryptObject.decrypt(encryptedData);
 console.log("... and then decryption...");
 console.log("Decipher Text : " + decryptedData);
@@ -163,7 +158,7 @@ To encrypt and decrypt JavaScript object literal, simply use `encrypt()` and `de
 
 
 ```javascript
-var ncrypt = require("ncrypt-js");
+var { ncrypt } = require("ncrypt-js");
 
 var _secretKey = "some-super-secret-key";
 var object = {
@@ -176,13 +171,13 @@ var ncryptObject = new ncrypt('ncrypt-js');
 // encrypting super sensitive data here
 var encryptedObject = ncryptObject.encrypt(object);
 console.log("Encryption process...");
-console.log("Plain Object     : " + object);
+console.log("Plain Object     : ", object);
 console.log("Encrypted Object : " + encryptedObject);
 
-// decrypted super encrypted string here
+// decrypted super sensitive data here
 var decryptedObject = ncryptObject.decrypt(encryptedObject);
 console.log("... and then decryption...");
-console.log("Decipher Text : " + decryptedObject);
+console.log("Decipher Text : ", decryptedObject);
 console.log("...done.");
 ````
 If you are using any sort of environmental key-value store, e.g `.env` and for additional security, you can add the following to your environment.
@@ -198,13 +193,14 @@ NCRPT_ENC='hex'
 
 SECRET='this is our hashing secret'
 ```
-Then when creating your object, you can use the SECRET from your environment e.g:
-```
-...
-var ncrypt = require('ncrypt-js');
+When creating your object, you can use the `SECRET` from your environment e.g:
+
+```js
+var { ncrypt } = require('ncrypt-js');
 var { encrypt, decrypt } = new ncrypt(process.env.SECRET);
 ...
 ```
+_**NOTE:** The secret is required to decrypt the encrypted data, if the secret used to encrypt a specific data is lost, then that data cannot be decripted._
 
 ## Built With 
 
