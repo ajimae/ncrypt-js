@@ -1,6 +1,6 @@
 # NcryptJs
 
-[![Build Status](https://travis-ci.com/ajimae/ncrypt-js.svg?branch=master)](https://travis-ci.com/ajimae/ncrypt-js) [![Coverage Status](https://coveralls.io/repos/github/ajimae/ncrypt-js/badge.svg)](https://coveralls.io/github/ajimae/ncrypt-js) [![NPM](https://img.shields.io/npm/l/ncrypt-js)](https://www.npmjs.com/package/ncrypt-js/v/2.0.0#license)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ajimae/ncrypt-js/release.yml) [![Coverage Status](https://coveralls.io/repos/github/ajimae/ncrypt-js/badge.svg)](https://coveralls.io/github/ajimae/ncrypt-js) [![NPM](https://img.shields.io/npm/l/ncrypt-js)](https://www.npmjs.com/package/ncrypt-js/v/2.0.0#license)
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/ajimae/ncrypt-js)](https://github.com/ajimae/ncrypt-js/releases) [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/ajimae/ncrypt-js)](https://github/languages/code-size/ajimae/ncrypt-js) [![GitHub issues](https://img.shields.io/github/issues/ajimae/ncrypt-js)](https://github.com/ajimae/ncrypt-js/issues)
 
