@@ -1,8 +1,8 @@
 # NcryptJs
 
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ajimae/ncrypt-js/release.yml) [![Coverage Status](https://coveralls.io/repos/github/ajimae/ncrypt-js/badge.svg)](https://coveralls.io/github/ajimae/ncrypt-js) [![NPM](https://img.shields.io/npm/l/ncrypt-js)](https://www.npmjs.com/package/ncrypt-js/v/2.0.0#license)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ajimae/ncrypt-js/release.yml) [![Coverage Status](https://coveralls.io/repos/github/ajimae/ncrypt-js/badge.svg)](https://coveralls.io/github/ajimae/ncrypt-js) ![NPM Downloads](https://img.shields.io/npm/dw/ncrypt-js)
 
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/ajimae/ncrypt-js)](https://github.com/ajimae/ncrypt-js/releases) [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/ajimae/ncrypt-js)](https://github/languages/code-size/ajimae/ncrypt-js) [![GitHub issues](https://img.shields.io/github/issues/ajimae/ncrypt-js)](https://github.com/ajimae/ncrypt-js/issues)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/ajimae/ncrypt-js)](https://github.com/ajimae/ncrypt-js/releases) [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/ajimae/ncrypt-js)](https://github/languages/code-size/ajimae/ncrypt-js) [![GitHub issues](https://img.shields.io/github/issues/ajimae/ncrypt-js)](https://github.com/ajimae/ncrypt-js/issues) [![NPM](https://img.shields.io/npm/l/ncrypt-js)](https://www.npmjs.com/package/ncrypt-js/v/2.0.0#license)
 
 **_NcryptJs_** is a light weight javascript data encryption and decryption library. This library implements the nodejs default crypto functionality as a mid-channel cipher in addition to a simple and elegant custom data encoding and encryption algorithm.
 
@@ -85,7 +85,7 @@ var { ncrypt } = require("ncrypt-js");
 
 ### Using randomString method
 
-The `randomString()` static method can generate [random bytes](https://nodejs.org/api/crypto.html#cryptorandombytessize-callback) encoded into a `hexadecimal` or `base64` strings. This string can be useful in a variety of use cases e.g to generate database ids, to generate a unique string for a list, a unique serial strings etc.
+The `randomString()` static method can generate [random bytes](https://nodejs.org/api/crypto.html#cryptorandombytessize-callback) encoded into a `hexadecimal` or `base64` strings. This string can be useful in a variety of use cases e.g to generate database ids, to generate a unique string for a list, a unique serial strings, api keys etc.
 
 ```ts
 var { ncrypt } = require('ncrypt-js'); // or import ncrypt from 'ncrypt-js'
@@ -120,7 +120,7 @@ console.log("Encryption process...");
 console.log("Plain Text    : " + data);
 console.log("Cipher Text   : " + encryptedData);
 
-// decrypted super encrypted string here
+// decrypting the encrypted super sensitive data here
 var decryptedData = decrypt(encryptedData);
 console.log("... and then decryption...");
 console.log("Decipher Text : " + decryptedData);
@@ -189,7 +189,7 @@ If you are using any sort of environmental key-value store, e.g `.env` and for a
 KEY='sshhhh this is a super secret key'
 
 # used internally to set the `encoding` - ['base64' | 'binary' | 'hex' | 'ucs-2' | 'ucs2' | 'utf16le']
-NCRPT_ENC='hex'
+NCRYPT_ENC='hex'
 
 SECRET='this is our hashing secret'
 ```
@@ -200,7 +200,9 @@ var { ncrypt } = require('ncrypt-js');
 var { encrypt, decrypt } = new ncrypt(process.env.SECRET);
 ...
 ```
-_**NOTE:** The secret is required to decrypt the encrypted data, if the secret used to encrypt a specific data is lost, then that data cannot be decripted._
+_**NOTE:** The secret is required to decrypt the encrypted data, if the secret used to encrypt a specific data is lost, then that data cannot be decrypted._
+
+_Same goes for encoding, if data was encrypted using `hex` encoding format, decrypting with a `base64` encoding or other encoding format and vise versa will not work_
 
 ## Built With 
 
@@ -210,7 +212,7 @@ Written in [TypeScript](https://typscriptlang.org/), built into ECMAScript 5 usi
 
 To contribute, simply fork this project, and issue a pull request.
 
-## Version Management
+## Versioning
 
 We use [SemVer](http://semver.org/) for version management. For the versions available, see the [tags on this repository](https://github.com/ajimae/ncrypt-js/tags).
 

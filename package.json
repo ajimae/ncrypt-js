@@ -1,6 +1,6 @@
 {
   "name": "ncrypt-js",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "a light weight javascript data encryption and decryption library",
   "main": "dist/index.js",
   "scripts": {
@@ -51,7 +51,6 @@
   "files": [
     "dist",
     "package.json",
-    "LICENSE",
-    "tsconfig.json"
+    "LICENSE"
   ]
 }

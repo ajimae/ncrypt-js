@@ -45,7 +45,7 @@ export default class Ncrypt {
   constructor(secret: string) {
     this.secret = secret;
 
-    // bind public instnace methods
+    // bind public instance methods
     this.encrypt = this.encrypt.bind(this);
     this.decrypt = this.decrypt.bind(this);
   }
