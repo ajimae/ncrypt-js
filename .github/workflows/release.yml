@@ -60,5 +60,5 @@ jobs:
         run: yarn build
       - name: publish
         run: yarn publish --access=public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # env:
+        #   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
