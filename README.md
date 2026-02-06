@@ -16,8 +16,9 @@
     * [NcryptJs Methods](#ncryptjs-methods)
     * [Using the `randomString()` methods](#using-randomstring-method)
     * [Using `encrypt()` and `decrypt()` methods](#using-encrypt-and-decrypt-methods)
-    * [Stirng Encryption](#string-encryption)
+    * [String Encryption](#string-encryption)
     * [Object Encryption](#object-encryption)
+    * [Using password hashing methods](#using-password-hashing-methods)
   * [Built With](#built-with)
   * [Contribution](#contribution)
   * [Version Management](#version-management)
@@ -79,6 +80,9 @@ var { ncrypt } = require("ncrypt-js");
 | Methods                                                                                              | Description                                                                                            | Parameters                                                                                             | Return                                                                                                 |
 | -------------------------------------------------------------                                          | --------------------------------------------------------------------------------------                 | -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                             | ----------------------------------------------------------------------------------------------------------------                                                                                                |
 | [_static_] **randomString()**                                                                                          | Random String.                                                                                     |**size**: _number_ - An optional size of the generated `randomBytes`. <br/>**enc:** _base64/hex_ - Encoding used for encoding the `randomBytes` defaults to _`base64`_ |**encoded**: _string_ - encoded string.                                                                    |
+| [_static_] **generate()**                                                                                          | Generates a hashed password.                                                                                     |**password**: _string_ - The password to hash. <br/>**options**: _object_ - Optional configuration object (see below). |**hashedPassword**: _string_ - The hashed password string.                                                                    |
+| [_static_] **verify()**                                                                                          | Verifies a password against a hashed password.                                                                 | **password**: _string_ - The password to verify. <br/>**hashedPassword**: _string_ - The hashed password to verify against. <br/>**options**: _object_ - Optional configuration object (see below).                        | **boolean** - Returns `true` if the password matches the hash, `false` otherwise.
+| [_static_] **isHashed()**                                                                                          | Checks if a string is a hashed password.                                                                 | **password**: _string_ - The string to check. <br/>**options**: _object_ - Optional configuration object (see below).                        | **boolean** - Returns `true` if the string appears to be a hashed password, `false` otherwise.
 | **encrypt()**                                                                                          | Encrypts data.                                                                                     |**data**: _object/string/number/boolean_ - The data to be encrypted. <br/>|**ciphered**: _string_ - encrypted data.                                                                    |
 | **decrypt()**                                                                                          | Decrypts the encrypted or ciphered data                                                                 | **encodedData**: string - The encrypted data: _string_ to be decrypted.                        | **data**: _string/object/number/boolean_ - The decrypted or original data (it might be string or object, depends on the initial input data type).
 
@@ -203,6 +207,110 @@ var { encrypt, decrypt } = new ncrypt(process.env.SECRET);
 _**NOTE:** The secret is required to decrypt the encrypted data, if the secret used to encrypt a specific data is lost, then that data cannot be decrypted._
 
 _Same goes for encoding, if data was encrypted using `hex` encoding format, decrypting with a `base64` encoding or other encoding format and vise versa will not work_
+
+### Using password hashing methods
+
+The `generate()`, `verify()`, and `isHashed()` static methods provide secure password hashing and verification functionality. These methods use HMAC (Hash-based Message Authentication Code) for password hashing.
+
+#### Generating a hashed password
+
+The `generate()` method creates a secure hash of a password with a randomly generated salt.
+
+```ts
+var { ncrypt } = require('ncrypt-js'); // or import ncrypt from 'ncrypt-js'
+
+var password = "mySecurePassword123";
+var hashedPassword = ncrypt.generate(password);
+console.log(hashedPassword); // sha1$abc12345$1$hashedvalue...
+
+// signature
+ncrypt.generate(password: string, options?: {
+  algorithm?: string;          // Hash algorithm (default: 'sha1')
+  saltLength?: number;         // Salt length in characters (default: 8)
+  iterations?: number;         // Number of hash iterations (default: 1)
+  encoding?: 'hex' | 'base64'; // Encoding format (default: 'hex')
+  separator?: string;          // Separator character (default: '$')
+});
+```
+
+#### Verifying a password
+
+The `verify()` method checks if a plain text password matches a previously hashed password.
+
+```ts
+var { ncrypt } = require('ncrypt-js');
+
+var password = "mySecurePassword123";
+var hashedPassword = ncrypt.generate(password);
+
+// Later, verify the password
+var isValid = ncrypt.verify(password, hashedPassword);
+console.log(isValid);           // true
+
+// signature
+ncrypt.verify(password: string, hashedPassword: string, options?: {
+  encoding?: 'hex' | 'base64';  // Encoding format (default: 'hex')
+  separator?: string;           // Separator character (default: '$')
+});
+```
+
+#### Checking if a string is hashed
+
+The `isHashed()` method checks if a string appears to be a hashed password by verifying its format.
+
+```ts
+var { ncrypt } = require('ncrypt-js');
+
+var hashedPassword = ncrypt.generate("password123");
+var isHashed = ncrypt.isHashed(hashedPassword);
+console.log(isHashed); // true
+
+var plainPassword = "password123";
+var isHashed = ncrypt.isHashed(plainPassword);
+console.log(isHashed); // false
+
+// signature
+ncrypt.isHashed(password: string, options?: {
+  separator?: string; // Separator character (default: '$')
+});
+```
+
+#### Advanced usage with custom options
+
+You can customize the hashing algorithm, salt length, iterations, encoding, and separator:
+
+```ts
+var { ncrypt } = require('ncrypt-js');
+
+// Generate with custom options
+var hashedPassword = ncrypt.generate("password123", {
+  algorithm: "sha256",   // Use SHA-256 instead of SHA-1
+  saltLength: 16,        // Use 16 character salt
+  iterations: 1000,      // Apply hashing 1000 times
+  encoding: "base64",    // Use base64 encoding
+  separator: "."         // Use '.' as separator instead of '$'
+});
+
+// Verify with matching options
+var isValid = ncrypt.verify("password123", hashedPassword, {
+  encoding: "base64",
+  separator: "."
+});
+console.log(isValid); // true
+```
+
+**Available hash algorithms:** Any algorithm supported by Node.js `crypto.createHmac()`, such as `'sha1'`, `'sha256'`, `'sha512'`, `'md5'`, etc.
+
+**Note:** The `encoding` and `separator` options must match between `generate()` and `verify()` calls for verification to succeed. To be safe, ensure you create a single options object and use the same object everywhere.
+
+```ts
+const same_options_obj = {
+  ...
+}
+
+ncrypt.generate("pass", same_options_obj)
+ncrypt.verify("pass", hasedPass, same_options_obj)
+```
 
 ## Built With 
 

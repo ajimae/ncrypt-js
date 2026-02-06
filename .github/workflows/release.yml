@@ -3,6 +3,11 @@ on:
   release:
     types: [published]
 
+permissions:
+  actions: write
+  contents: write
+  id-token: write  # Required for npm trusted publishing (OIDC)
+
 jobs:
   test:
     name: test
@@ -17,7 +22,7 @@ jobs:
       - name: node setup
         uses: actions/setup-node@v4
         with:
-          node-version: 12
+          node-version: 18
           cache: 'yarn'
 
       - name: install dependencies
@@ -39,9 +44,15 @@ jobs:
       - name: node setup
         uses: actions/setup-node@v4
         with:
-          node-version: 12
+          node-version: 18
           registry-url: https://registry.npmjs.org
           cache: 'yarn'
+
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Verify npm version
+        run: npm --version
 
       - name: install dependencies
         run: yarn install --frozen-lockfile
