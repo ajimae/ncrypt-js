@@ -23,6 +23,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
+          registry-url: https://registry.npmjs.org/
           cache: "yarn"
 
       - name: install dependencies
@@ -45,6 +46,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
+          registry-url: https://registry.npmjs.org/
           cache: "yarn"
 
       - name: Update npm
@@ -58,7 +60,7 @@ jobs:
       - name: build source
         run: yarn build
       - name: publish
-        run: yarn publish --access=public
+        run: npm publish --access public
         env:
           NPM_CONFIG_REGISTRY: "https://registry.npmjs.org"
           # NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
