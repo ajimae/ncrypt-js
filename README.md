@@ -1,6 +1,7 @@
 # NcryptJs
 
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ajimae/ncrypt-js/release.yml) [![Coverage Status](https://coveralls.io/repos/github/ajimae/ncrypt-js/badge.svg)](https://coveralls.io/github/ajimae/ncrypt-js) ![NPM Downloads](https://img.shields.io/npm/dw/ncrypt-js)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ajimae/ncrypt-js/.github%2Fworkflows%2Fci.yml)
+ [![Coverage Status](https://coveralls.io/repos/github/ajimae/ncrypt-js/badge.svg)](https://coveralls.io/github/ajimae/ncrypt-js) ![NPM Downloads](https://img.shields.io/npm/dw/ncrypt-js)
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/ajimae/ncrypt-js)](https://github.com/ajimae/ncrypt-js/releases) [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/ajimae/ncrypt-js)](https://github/languages/code-size/ajimae/ncrypt-js) [![GitHub issues](https://img.shields.io/github/issues/ajimae/ncrypt-js)](https://github.com/ajimae/ncrypt-js/issues) [![NPM](https://img.shields.io/npm/l/ncrypt-js)](https://www.npmjs.com/package/ncrypt-js/v/2.0.0#license)
 
