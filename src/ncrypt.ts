@@ -1,7 +1,7 @@
-import * as crypto from "crypto";
+import * as crypto from "node:crypto";
 
-type TNCRYPT_ENC = "base64" | "binary" | "hex" | "ucs-2" | "ucs2" | "utf16le";
-type THASH_ENC = {
+export type TNCRYPT_ENC = "base64" | "binary" | "hex" | "ucs-2" | "ucs2" | "utf16le";
+export type THASH_ENC = {
   algorithm?: string;
   saltLength?: number;
   iterations?: number;
@@ -10,9 +10,36 @@ type THASH_ENC = {
 };
 
 /**
+ * keyset
+ */
+export interface Keyset {
+  id: string;
+  skey: Buffer;
+  ekey: Buffer;
+}
+
+export interface Keysets {
+  [id: string]: Keyset;
+}
+
+export interface Payload {
+  [key: string]: unknown;
+}
+
+export interface DecodedResult {
+  id: string;
+  payload: Payload;
+}
+
+export interface EncodeHeader {
+  kid: string;
+}
+
+/**
  * @class Ncrypt
  * @type {Ncrypt.<object>}
  */
+export { Ncrypt as ncrypt }
 export default class Ncrypt {
   /**
    * encryption secret.
@@ -61,6 +88,7 @@ export default class Ncrypt {
     // bind public instance methods
     this.encrypt = this.encrypt.bind(this);
     this.decrypt = this.decrypt.bind(this);
+    this.compare = this.compare.bind(this);
   }
 
   /**
@@ -92,6 +120,92 @@ export default class Ncrypt {
   private convertByteToHexadecimal = (number: number): string => {
     return ("0" + Number(number).toString(16)).substr(-2);
   };
+
+
+  /**
+   * encodes a payload into a JOSE-like dot-separated token
+   * uses AES-256-CBC encryption with a random IV and HMAC-SHA256 signing
+   *
+   * @param {Payload} payload - the data to encode
+   * @param {Keyset} keyset - the keyset containing id, signing key (skey), and encryption key (ekey)
+   * @returns {string} dot-separated token in the format: base64url(header).base64url(ciphertext).base64url(iv).base64url(signature)
+   */
+  static encode(payload: Payload, keyset: Keyset): string {
+    const header: EncodeHeader = { kid: keyset.id };
+    const headerBuf = Buffer.from(JSON.stringify(header));
+    const plaintextBuf = Buffer.from(JSON.stringify(payload));
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv("aes-256-cbc", keyset.ekey, iv);
+    const encrypted = Buffer.concat([cipher.update(plaintextBuf), cipher.final()]);
+    const sig = crypto.createHmac("sha256", keyset.skey).update(encrypted).update(iv).digest();
+
+    const parts = [headerBuf, encrypted, iv, sig].map((b) => b.toString("base64url"));
+    return parts.join(".");
+  }
+
+  /**
+   * decodes and verifies a JOSE-like token produced by encode()
+   * validates the HMAC-SHA256 signature via timing-safe comparison,
+   * then decrypts the ciphertext with AES-256-CBC
+   *
+   * @param {string} payload - the dot-separated token to decode
+   * @param {Keysets} keysets - object mapping key IDs to Keysets, used to look up the keyset matching the token's kid header
+   * @returns {DecodedResult} object containing the key id and decrypted payload
+   * @throws {Error} "Malformed payload." if the token format is invalid
+   * @throws {Error} "Payload protected with unsupported keyset." if the key id is not found in keysets
+   * @throws {Error} "Signatures do not match." if HMAC verification fails
+   * @throws {Error} "Payload decryption failed." if decryption or JSON parsing fails
+   */
+  static decode(payload: string, keysets: Keysets): DecodedResult {
+    const tokens = payload.split(".");
+    if (tokens.length !== 4) throw new Error("Malformed payload.");
+
+    const [headerB64, encryptedB64, ivB64, sigB64] = tokens;
+
+    let header: EncodeHeader;
+    let encrypted: Buffer;
+    let iv: Buffer;
+    let sig: Buffer;
+    try {
+      header = JSON.parse(
+        Buffer.from(headerB64, "base64url").toString("utf-8"),
+      );
+      encrypted = Buffer.from(encryptedB64, "base64url");
+      iv = Buffer.from(ivB64, "base64url");
+      sig = Buffer.from(sigB64, "base64url");
+    } catch {
+      throw new Error("Malformed payload.");
+    }
+
+    if (!header?.kid) throw new Error("Malformed payload.");
+
+    const keyset = keysets[header.kid];
+    if (!keyset) throw new Error("Payload protected with unsupported keyset.");
+
+    const actualSig = crypto.createHmac("sha256", keyset.skey)
+      .update(encrypted)
+      .update(iv)
+      .digest();
+
+    if (!crypto.timingSafeEqual(actualSig, sig)) {
+      throw new Error("Signatures do not match.");
+    }
+
+    const decipher = crypto.createDecipheriv("aes-256-cbc", keyset.ekey, iv);
+    let plaintext: Payload;
+    try {
+      plaintext = JSON.parse(
+        Buffer.concat([decipher.update(encrypted), decipher.final()]).toString(
+          "utf-8",
+        ),
+      );
+    } catch {
+      throw new Error("Payload decryption failed.");
+    }
+
+    return { id: header.kid, payload: plaintext };
+  }
+
 
   /**
    * intermediate data encoder function
@@ -246,7 +360,7 @@ export default class Ncrypt {
           options.separator,
         ) == hashedPassword
       );
-    } catch (e) {}
+    } catch (e) { }
     return false;
   }
 
@@ -284,6 +398,21 @@ export default class Ncrypt {
   }
 
   /**
+   * compares two encrypted strings to determine if they decrypt to the same value
+   *
+   * @param {string} text1 - first encrypted string
+   * @param {string} text2 - second encrypted string
+   * @returns {boolean} true if both decrypt to the same plaintext, false if they differ or if either cannot be decrypted
+   */
+  public compare(text1: string, text2: string): boolean {
+    try {
+      return (this.decode(text1) == this.decode(text2))
+    } catch (e) {
+      return false
+    }
+  }
+
+  /**
    * data to be encrypted
    * @param {data.<stirng>} data
    * @returns {*.<string>} encrypted text
@@ -306,7 +435,7 @@ export default class Ncrypt {
     } catch (e) {
       throw new Error(
         "invalid data was entered, enter data of type object, number, string or boolean to be encrypted." +
-          e,
+        e,
       );
     }
   }
@@ -320,7 +449,7 @@ export default class Ncrypt {
     const encodeData = this.decode(text);
 
     const data = encodeData
-      .match(/.{1,2}/g)
+      .match(/.{1,2}/g)!
       .map((hex: string) => parseInt(hex, 16))
       .map(this.applySecretToCharacters)
       .map((charCode: number | number[]) =>
