@@ -1,6 +1,6 @@
 {
   "name": "ncrypt-js",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "a light weight javascript data encryption and decryption library",
   "main": "dist/ncrypt.cjs",
   "module": "dist/ncrypt.mjs",
