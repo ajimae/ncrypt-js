@@ -194,6 +194,8 @@ describe("Data Encryption/Decryption", () => {
         }
       });
     });
+
+
   });
 })
 
@@ -460,7 +462,9 @@ describe("Password Hashing/Verificatioin", () => {
   });
 });
 
-
+// ==========================================
+// Password Hashing Tests
+// ==========================================
 describe('json-sec', () => {
   describe("encode / decode roundtrip", () => {
     it("encodes and decodes a basic payload", () => {
