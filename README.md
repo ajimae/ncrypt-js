@@ -55,7 +55,7 @@ yarn add ncrypt-js
 To include **_ncrypt-js_** in your project. use one of these:
 
 ```js
-// ES6 and later
+// ES6 and later (typescript)
 import ncrypt from "ncrypt-js";
 // or import { ncrypt } from "ncrypt-js"
 ```
@@ -63,8 +63,9 @@ import ncrypt from "ncrypt-js";
 However, if you are using ECMAScript 5 and older, use the require statement:
 
 ```js
-// ES5 and older
+// ES5 and older (commonjs)
 var { ncrypt } = require("ncrypt-js");
+// or var ncrypt = require("ncrypt-js").default
 ```
 
 ## Documentation
@@ -84,8 +85,11 @@ var { ncrypt } = require("ncrypt-js");
 | [_static_] **generate()**                                                                                          | Generates a hashed password.                                                                                     |**password**: _string_ - The password to hash. <br/>**options**: _object_ - Optional configuration object (see below). |**hashedPassword**: _string_ - The hashed password string.                                                                    |
 | [_static_] **verify()**                                                                                          | Verifies a password against a hashed password.                                                                 | **password**: _string_ - The password to verify. <br/>**hashedPassword**: _string_ - The hashed password to verify against. <br/>**options**: _object_ - Optional configuration object (see below).                        | **boolean** - Returns `true` if the password matches the hash, `false` otherwise.
 | [_static_] **isHashed()**                                                                                          | Checks if a string is a hashed password.                                                                 | **password**: _string_ - The string to check. <br/>**options**: _object_ - Optional configuration object (see below).                        | **boolean** - Returns `true` if the string appears to be a hashed password, `false` otherwise.
+| [_static_] **encode()**                                                                                          | Encodes payload into a JOSE-like token.                                                                 |**payload**: _Payload_ - Data to encode. <br/>**keyset**: _Keyset_ - Keyset with id, signing key, and encryption key. |**token**: _string_ - Dot-separated token (header.ciphertext.iv.signature).                                                                    |
+| [_static_] **decode()**                                                                                          | Decodes and verifies a JOSE-like token.                                                                 | **payload**: _string_ - The token string. <br/>**keysets**: _Keysets_ - Object mapping key IDs to Keysets.                        | **DecodedResult** - `{ id, payload }` with the key ID and decrypted payload.                                                                                                |
 | **encrypt()**                                                                                          | Encrypts data.                                                                                     |**data**: _object/string/number/boolean_ - The data to be encrypted. <br/>|**ciphered**: _string_ - encrypted data.                                                                    |
-| **decrypt()**                                                                                          | Decrypts the encrypted or ciphered data                                                                 | **encodedData**: string - The encrypted data: _string_ to be decrypted.                        | **data**: _string/object/number/boolean_ - The decrypted or original data (it might be string or object, depends on the initial input data type).
+| **decrypt()**                                                                                          | Decrypts the encrypted or ciphered data                                                                 | **encodedData**: string - The encrypted data: _string_ to be decrypted.                        | **data**: _string/object/number/boolean_ - The decrypted or original data (it might be string or object, depends on the initial input data type).                                                                    |
+| **compare()**                                                                                          | Compares two encrypted strings to check if they decrypt to the same value.                                                                 | **text1**: _string_ - First encrypted string. <br/>**text2**: _string_ - Second encrypted string.                        | **boolean** - Returns `true` if both decrypt to the same value, `false` otherwise.
 
 
 ### Using randomString method
@@ -312,6 +316,64 @@ const same_options_obj = {
 ncrypt.generate("pass", same_options_obj)
 ncrypt.verify("pass", hasedPass, same_options_obj)
 ```
+
+### Using compare() method
+
+The `compare()` instance method checks whether two encrypted strings decrypt to the same original value without exposing the plaintext.
+
+```js
+var { ncrypt } = require('ncrypt-js');
+
+var _secretKey = "some-super-secret-key";
+var ncryptObject = new ncrypt(_secretKey);
+
+var encrypted1 = ncryptObject.encrypt("Hello World!");
+var encrypted2 = ncryptObject.encrypt("Hello World!");
+var encrypted3 = ncryptObject.encrypt("Different value");
+
+console.log(ncryptObject.compare(encrypted1, encrypted2)); // true
+console.log(ncryptObject.compare(encrypted1, encrypted3)); // false
+```
+
+### Using encode() and decode() static methods
+
+The `encode()` and `decode()` static methods provide a JOSE-like token format for secure data exchange. They use a keyset containing a key ID (`id`), a signing key (`skey`), and an encryption key (`ekey`). The token is a dot-separated string consisting of a base64url-encoded header, ciphertext, IV, and HMAC signature.
+
+```js
+var { ncrypt } = require('ncrypt-js');
+
+// Create a keyset
+var keyset = {
+  id: "key1",
+  skey: Buffer.from("my-signing-key-which-must-be-32-chars-long!", "utf-8"),
+  ekey: Buffer.from("my-encryption-key-which-must-be-32-chars-long", "utf-8"),
+};
+
+// Encode a payload
+var token = ncrypt.encode({ user: "alice", role: "admin" }, keyset);
+console.log(token); // eyJraWQiOiJrZXkxIn0.0lW6zg... (dot-separated token)
+
+// Decode and verify the token
+var keysets = { key1: keyset };
+var result = ncrypt.decode(token, keysets);
+console.log(result.id);      // "key1"
+console.log(result.payload); // { user: "alice", role: "admin" }
+```
+
+You can manage multiple keysets and rotate keys by adding new entries to the keysets object:
+
+```js
+var keysets = {
+  key1: { id: "key1", skey: Buffer.from("..."), ekey: Buffer.from("...") },
+  key2: { id: "key2", skey: Buffer.from("..."), ekey: Buffer.from("...") },
+};
+
+// Token created with key1 can still be decoded as long as key1 is in keysets
+var result = ncrypt.decode(token, keysets);
+console.log(result.id); // "key1"
+```
+
+**Note:** The `decode()` method validates the HMAC signature using `crypto.timingSafeEqual()` to prevent timing attacks. If the signature doesn't match, it throws `"Signatures do not match."`.
 
 ## Built With 
 
