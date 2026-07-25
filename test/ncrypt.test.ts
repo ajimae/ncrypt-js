@@ -1,5 +1,4 @@
 import * as chai from "chai";
-// import { describe, it } from "node:test"
 import assert from "node:assert/strict"
 import { randomBytes } from "node:crypto"
 
@@ -51,6 +50,30 @@ describe("Data Encryption/Decryption", () => {
   const decryptNullData = encrypt(_null);
 
   describe('Payload Encyption and Decryption', () => {
+    describe("Compare", () => {
+      it("should return true when both encrypted values decrypt to the same plaintext", () => {
+        const ncryptObj = new ncrypt(_secret);
+        const encA = ncryptObj.encrypt("hello");
+        const encB = ncryptObj.encrypt("hello");
+        expect(ncryptObj.compare(encA, encB)).to.be.true;
+      });
+
+      it("should return false when encrypted values decrypt to different plaintext", () => {
+        const ncryptObj = new ncrypt(_secret);
+        const encA = ncryptObj.encrypt("hello");
+        const encB = ncryptObj.encrypt("world");
+        expect(ncryptObj.compare(encA, encB)).to.be.false;
+      });
+
+      it("should return false if either value cannot be decrypted", () => {
+        const ncryptObj = new ncrypt(_secret);
+        const valid = ncryptObj.encrypt("hello");
+        expect(ncryptObj.compare(valid, "invalid-garbage")).to.be.false;
+        expect(ncryptObj.compare("invalid-garbage", valid)).to.be.false;
+        expect(ncryptObj.compare("bad1", "bad2")).to.be.false;
+      });
+    });
+
     describe("RandomString", () => {
       it("should generate a random string", () => {
         const size = 32,
